@@ -1,9 +1,0 @@
-[submodule "src/Logixware.SoftEther.Client.Core"]
-	path = src/Logixware.SoftEther.Client.Core
-	url = https://github.com/Gaulomatic/Logixware.SoftEther.Client.Core.git
-[submodule "src/Logixware.SoftEther.Client.Manager"]
-	path = src/Logixware.SoftEther.Client.Manager
-	url = https://github.com/Gaulomatic/Logixware.SoftEther.Client.Manager.git
-[submodule "src/Logixware.SoftEther.Client.Daemon"]
-	path = src/Logixware.SoftEther.Client.Daemon
-	url = https://github.com/Gaulomatic/Logixware.SoftEther.Client.Daemon.git
