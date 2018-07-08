@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>SoftEther VPN Client Manager</string>
+	<string>SoftEther VPN Client</string>
 	<key>CFBundleIdentifier</key>
 	<string>de.logixware.SoftEther.Client.Manager</string>
 	<key>CFBundleShortVersionString</key>

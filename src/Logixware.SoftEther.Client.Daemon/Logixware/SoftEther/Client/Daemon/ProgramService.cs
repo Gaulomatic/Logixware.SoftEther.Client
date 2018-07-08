@@ -74,9 +74,6 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			this._Logger.Inform("Starting application...");
 
-			var __StartTimeSpan = TimeSpan.Zero;
-			var __PeriodTimeSpan = TimeSpan.FromSeconds(5);
-
 			var __ValidNetworks = this._Configuration.GetValidNetworks(this._Cli).ToList();
 
 			if (__ValidNetworks.Count == 0)
@@ -109,10 +106,19 @@ namespace Logixware.SoftEther.Client.Daemon
 			}
 
 			this._Run = true;
-			this._Timer = new Timer(this.Tick, null, __StartTimeSpan, __PeriodTimeSpan);
+			this._Timer = new Timer(this.Run, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
 		}
 
-		private async void Tick(Object parameter)
+		private async void Run(Object parameter)
+		{
+			while (this._Run)
+			{
+				await this.TickAsync(parameter).ConfigureAwait(false);
+				Thread.Sleep(5000);
+			}
+		}
+
+		private async Task TickAsync(Object parameter)
 		{
 			if (!this._Run)
 			{

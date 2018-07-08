@@ -8,15 +8,15 @@
 		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin</string>
 	</dict>
 	<key>Label</key>
-	<string>de.logixware.SoftEther.Client</string>
+	<string>de.logixware.SoftEther.Client.Daemon</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Applications/VPN Client.app/Contents/MacOS/Current/Logixware.SoftEther.Client</string>
+		<string>/Applications/SoftEther VPN Client.app/Contents/Resources/daemon/Logixware.SoftEther.Client.Daemon</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
 	<key>WorkingDirectory</key>
-	<string>/Applications/VPN Client.app/Contents/MacOS/Current</string>
+	<string>/Applications/SoftEther VPN Client.app/Contents/Resources/daemon</string>
 	<key>StandardOutPath</key>
 	<string>/var/log/logixware/vpnclient/output.log</string>
 	<key>StandardErrorPath</key>

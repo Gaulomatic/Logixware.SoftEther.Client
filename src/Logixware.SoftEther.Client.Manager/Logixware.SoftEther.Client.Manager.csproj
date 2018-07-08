@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,7 +7,7 @@
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>Logixware.SoftEther.Client.Manager</RootNamespace>
-    <AssemblyName>SoftEther VPN Client Manager</AssemblyName>
+    <AssemblyName>SoftEther VPN Client</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
@@ -68,7 +68,9 @@
     <ImageAsset Include="Assets.xcassets\Contents.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Bullshit" />
     <Folder Include="Resources\" />
+    <Folder Include="Resources\daemon" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -84,6 +86,10 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
+    <InterfaceDefinition Include="Resources\en.lproj\Main.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\vpnclient\softether-vpnclient-v4.25-9656-rtm-2018.01.15-macos-x64-64bit.tar" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

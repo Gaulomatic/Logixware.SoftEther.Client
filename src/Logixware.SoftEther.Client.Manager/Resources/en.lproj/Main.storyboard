@@ -656,6 +656,21 @@
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="188" y="240" width="355" height="251"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <toolbar key="toolbar" implicitIdentifier="5588FD92-A338-4DD4-B24E-B5E05122D971" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="UR9-Ng-xGQ">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="FlI-B2-N3X"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="19w-uO-1Oe"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="Pfu-K2-awk"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="SEn-GO-jWN"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="pmD-7b-N0k"/>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="FlI-B2-N3X"/>
+                                <toolbarItem reference="19w-uO-1Oe"/>
+                                <toolbarItem reference="pmD-7b-N0k"/>
+                                <toolbarItem reference="Pfu-K2-awk"/>
+                            </defaultToolbarItems>
+                        </toolbar>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="gZC-63-kYU"/>
                         </connections>
