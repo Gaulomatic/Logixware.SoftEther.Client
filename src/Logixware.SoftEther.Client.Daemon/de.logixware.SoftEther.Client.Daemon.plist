@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin</string>
+	</dict>
+	<key>Label</key>
+	<string>de.logixware.SoftEther.Client</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Applications/VPN Client.app/Contents/MacOS/Current/Logixware.SoftEther.Client</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>WorkingDirectory</key>
+	<string>/Applications/VPN Client.app/Contents/MacOS/Current</string>
+	<key>StandardOutPath</key>
+	<string>/var/log/logixware/vpnclient/output.log</string>
+	<key>StandardErrorPath</key>
+	<string>/var/log/logixware/vpnclient/error.log</string>
+</dict>
+</plist>

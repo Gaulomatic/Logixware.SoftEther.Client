@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logixware.SoftEther.Client.Manager", "src\Logixware.SoftEther.Client.Manager\Logixware.SoftEther.Client.Manager.csproj", "{4E1D138F-EA24-4BD0-8E69-4CD6AACD203E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logixware.SoftEther.Client.Core", "src\Logixware.SoftEther.Client.Core\Logixware.SoftEther.Client.Core.csproj", "{46B34AA8-92B6-45FF-8890-3BFAFC90B67E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logixware.SoftEther.Client.Daemon", "src\Logixware.SoftEther.Client.Daemon\Logixware.SoftEther.Client.Daemon.csproj", "{004238EF-98C3-4DCA-A40F-62227F5CA16D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E1D138F-EA24-4BD0-8E69-4CD6AACD203E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4E1D138F-EA24-4BD0-8E69-4CD6AACD203E}.Debug|Any CPU.Build.0 = Debug|x86
+		{4E1D138F-EA24-4BD0-8E69-4CD6AACD203E}.Release|Any CPU.ActiveCfg = Release|x86
+		{4E1D138F-EA24-4BD0-8E69-4CD6AACD203E}.Release|Any CPU.Build.0 = Release|x86
+		{46B34AA8-92B6-45FF-8890-3BFAFC90B67E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B34AA8-92B6-45FF-8890-3BFAFC90B67E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B34AA8-92B6-45FF-8890-3BFAFC90B67E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B34AA8-92B6-45FF-8890-3BFAFC90B67E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{004238EF-98C3-4DCA-A40F-62227F5CA16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{004238EF-98C3-4DCA-A40F-62227F5CA16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{004238EF-98C3-4DCA-A40F-62227F5CA16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{004238EF-98C3-4DCA-A40F-62227F5CA16D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
