@@ -22,7 +22,7 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyGuidAttribute>false</GenerateAssemblyGuidAttribute>
   </PropertyGroup>
-  <Import Condition="Exists('..\..\Solution.build.props')" Project="..\..\Solution.build.props" />
+  <Import Condition="Exists('..\..\Solution.build.props')" Project="..\..\Solution.build.props"/>
   <PropertyGroup>
     <AssemblyVersionMajor>1</AssemblyVersionMajor>
     <AssemblyVersionMinor>0</AssemblyVersionMinor>

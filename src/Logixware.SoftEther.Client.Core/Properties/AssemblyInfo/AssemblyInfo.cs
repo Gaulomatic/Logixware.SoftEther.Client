@@ -8,9 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Reflection.AssemblyCopyright("Copyright © 1997 - 2018 Tobias Punke.")]
+[assembly: System.Reflection.AssemblyCopyright("Copyright © 2017 - 2018 Tobias Punke.")]
 [assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.0.0.3")]
-[assembly: System.Reflection.AssemblyInformationalVersion("1.0.0.3")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.0.5")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.0.5")]
 
 

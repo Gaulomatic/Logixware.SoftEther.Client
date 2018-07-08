@@ -114,8 +114,14 @@
     <InterfaceDefinition Include="Resources\en.lproj\Main.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\daemon\.gitkeep" />
-    <Content Include="Resources\vpnclient\.gitkeep" />
+    <Content Include="Resources\daemon\.gitkeep"/>
+    <Content Include="Resources\vpnclient\.gitkeep"/>
+    <!--<Content Include="Resources\daemon\**" />-->
+    <!--<Content Include="Resources\vpnclient\**" />-->
+    <!--<Content Remove="Resources\daemon\.gitkeep"/>-->
+    <!--<Content Remove="Resources\vpnclient\.gitkeep"/>-->
+    <!--<Compile Remove="Resources\daemon\**"/>-->
+    <!--<Compile Remove="Resources\daemon\**"/>-->
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>
