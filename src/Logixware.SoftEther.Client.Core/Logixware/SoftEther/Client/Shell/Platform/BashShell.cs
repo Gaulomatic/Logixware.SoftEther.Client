@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace Logixware.SoftEther.Client.Shell.Platform
 {
 
-	public class MacShell : IShell
+	public class BashShell : IShell
 	{
 		public ExecutionResult ExecuteCommand(String command)
 		{

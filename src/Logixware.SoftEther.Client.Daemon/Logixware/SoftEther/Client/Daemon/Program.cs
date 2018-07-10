@@ -56,8 +56,13 @@ namespace Logixware.SoftEther.Client.Daemon
 
 					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 					{
-						services.AddSingleton<IShell, MacShell>();
+						services.AddSingleton<IShell, BashShell>();
 						services.AddSingleton<IPlatform, MacPlatform>();
+					}
+					else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					{
+						services.AddSingleton<IShell, BashShell>();
+						services.AddSingleton<IPlatform, LinuxPlatform>();
 					}
 					else
 					{
