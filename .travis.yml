@@ -5,5 +5,5 @@ dotnet: 2.1.3
 dist: trusty
 sudo: required
 script:
-- dotnet restore
-- dotnet build --configuration Release
+- dotnet restore Logixware.SoftEther.Client.Daemon.sln
+- dotnet build Logixware.SoftEther.Client.Daemon.sln --configuration Release
