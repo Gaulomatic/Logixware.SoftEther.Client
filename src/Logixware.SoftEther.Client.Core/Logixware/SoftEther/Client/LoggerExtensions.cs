@@ -6,6 +6,11 @@ namespace Logixware.SoftEther.Client
 {
 	public static class LoggerExtensions
 	{
+		public static void Debug(this ILogger target, String message)
+		{
+			target.Log(LogLevel.Debug, 1, message, null, (s, e) => DateTime.Now + " " + s.ToString());
+		}
+
 		public static void Inform(this ILogger target, String message)
 		{
 			target.Log(LogLevel.Information, 1, message, null, (s, e) => DateTime.Now + " " + s.ToString());

@@ -2,13 +2,13 @@ using System;
 using System.Text;
 using System.Net.NetworkInformation;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
-	public class PingConnectionVerifier : IConnectionVerifier
+	public class PingVpnConnectionVerifier : IVpnConnectionVerifier
 	{
 		private IClientConfiguration _Configuration;
 
-		public PingConnectionVerifier(IClientConfiguration configuration)
+		public PingVpnConnectionVerifier(IClientConfiguration configuration)
 		{
 			this._Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}

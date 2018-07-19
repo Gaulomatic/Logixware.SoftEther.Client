@@ -6,7 +6,9 @@ using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.Shell;
 
-namespace Logixware.SoftEther.Client.Daemon.Platform
+using Logixware.SoftEther.Client.Daemon.Entities;
+
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
 
 	public class LinuxPlatform : IPlatform

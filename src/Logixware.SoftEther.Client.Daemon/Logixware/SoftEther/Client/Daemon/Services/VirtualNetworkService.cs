@@ -9,14 +9,15 @@ using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.VpnService;
+using Logixware.SoftEther.Client.Daemon.Entities;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
 	public class VirtualNetworkService : IDisposable
 	{
 		private readonly ILogger<VirtualNetworkService> _Logger;
 		private readonly ICommandLineInterface _Cli;
-		private readonly IConnectionVerifier _ConnectionVerifier;
+		private readonly IVpnConnectionVerifier _VpnConnectionVerifier;
 		private readonly IPlatform _Platform;
 
 		private readonly Subject<Object> _IsDisposed;
@@ -41,7 +42,7 @@ namespace Logixware.SoftEther.Client.Daemon
 		(
 			ILogger<VirtualNetworkService> logger,
 			ICommandLineInterface cli,
-			IConnectionVerifier connectionVerifier,
+			IVpnConnectionVerifier vpnConnectionVerifier,
 			IPlatform platform,
 			Subject<Object> clientServiceRestarting,
 			Subject<Object> clientServiceRestarted,
@@ -53,7 +54,7 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this._Cli = cli ?? throw new ArgumentNullException(nameof(cli));
-			this._ConnectionVerifier = connectionVerifier ?? throw new ArgumentNullException(nameof(connectionVerifier));
+			this._VpnConnectionVerifier = vpnConnectionVerifier ?? throw new ArgumentNullException(nameof(vpnConnectionVerifier));
 			this._Platform = platform ?? throw new ArgumentNullException(nameof(platform));
 			this.Configuration = network ?? throw new ArgumentNullException(nameof(network));
 
@@ -186,11 +187,11 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (state == ConfigurationState.OK)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Interface configuration completed.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Interface configuration completed.");
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": Interface configuration error.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Interface configuration error.");
 			}
 		}
 
@@ -198,12 +199,12 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (state == ConnectionState.Connected)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Connection is established.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Connection is established.");
 				this.AssignIPAddresses();
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": Connection is not established, State: \"{state}\".");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Connection is not established, State: \"{state}\".");
 				this.ReleaseIPAddresses();
 			}
 		}
@@ -212,11 +213,11 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (state == ReachableState.Reachable)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Network is reachable.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Network is reachable.");
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": Network is not reachable.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Network is not reachable.");
 			}
 		}
 
@@ -224,11 +225,11 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (value != null)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Account found in the VPN client service.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Account found in the VPN client service.");
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": Account not found in the VPN client service.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Account not found in the VPN client service.");
 			}
 		}
 
@@ -236,11 +237,11 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (value != null)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Device \"{this._Account.Value?.DeviceName}\" in the VPN client service found.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Device \"{this._Account.Value?.DeviceName}\" in the VPN client service found.");
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": Device \"{this._Account.Value?.DeviceName}\" in the VPN client service not found.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Device \"{this._Account.Value?.DeviceName}\" in the VPN client service not found.");
 			}
 		}
 
@@ -248,11 +249,11 @@ namespace Logixware.SoftEther.Client.Daemon
 		{
 			if (!String.IsNullOrEmpty(value))
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Interface \"{value} found.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Interface \"{value} found.");
 			}
 			else
 			{
-				this._Logger.Warn($"VPN \"{this.Configuration.Name}\": No interface for physical address \"{this._Device.Value?.PhysicalAddress}\" found.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": No interface for physical address \"{this._Device.Value?.PhysicalAddress}\" found.");
 			}
 		}
 
@@ -262,12 +263,12 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			if ((Boolean) value)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" assigned to adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" assigned to adapter \"{this._InterfaceName.Value}\".");
 				this.AssignIPv4Routes();
 			}
 			else
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" released from adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" released from adapter \"{this._InterfaceName.Value}\".");
 				this.ReleaseIPv4Routes();
 			}
 		}
@@ -275,7 +276,7 @@ namespace Logixware.SoftEther.Client.Daemon
 		private void OnIPv4AddressAssignmentError(Exception ex)
 		{
 			if (this.Configuration.IPv4 == null) return;
-			this._Logger.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv4.Address}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv4.Address}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
 		}
 
 		private void OnIPv6AddressAssignedChanged(Boolean? value)
@@ -284,12 +285,12 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			if ((Boolean) value)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" assigned to adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" assigned to adapter \"{this._InterfaceName.Value}\".");
 				this.AssignIPv6Routes();
 			}
 			else
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" released from adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" released from adapter \"{this._InterfaceName.Value}\".");
 				this.ReleaseIPv6Routes();
 			}
 		}
@@ -297,7 +298,7 @@ namespace Logixware.SoftEther.Client.Daemon
 		private void OnIPv6AddressAssignmentError(Exception ex)
 		{
 			if (this.Configuration.IPv6 == null) return;
-			this._Logger.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
 		}
 
 		private void OnIPv4RoutesAppliedChanged(Boolean? value)
@@ -306,19 +307,19 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			if ((Boolean) value)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv4 routes assigned.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IPv4 routes assigned.");
 				this.AssignIPv6Routes();
 			}
 			else
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv4 routes released.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IPv4 routes released.");
 				this.ReleaseIPv6Routes();
 			}
 		}
 
 		private void OnIPv4RoutesAssignmentError(Exception ex)
 		{
-			this._Logger.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IPv4 routes: {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IPv4 routes: {ex.Message}");
 		}
 
 		private void OnIPv6RoutesAppliedChanged(Boolean? value)
@@ -327,19 +328,19 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			if ((Boolean) value)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv6 routes assigned.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IPv6 routes assigned.");
 				this.AssignIPv6Routes();
 			}
 			else
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv6 routes released.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IPv6 routes released.");
 				this.ReleaseIPv6Routes();
 			}
 		}
 
 		private void OnIPv6RoutesAssignmentError(Exception ex)
 		{
-			this._Logger.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IPv6 routes: {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IPv6 routes: {ex.Message}");
 		}
 
 		private void OnConnectionVerificationResultChanged(ConnectionVerificationResult value)
@@ -347,11 +348,11 @@ namespace Logixware.SoftEther.Client.Daemon
 			if (value == null) return;
 			if (value.Reachable == ReachableState.Reachable)
 			{
-				this._Logger.Inform($"VPN \"{this.Configuration.Name}\": Connection test host \"{this.Configuration.ConnectionTestHost}\" successfully reached: \"{value.Details}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Connection test host \"{this.Configuration.ConnectionTestHost}\" successfully reached: \"{value.Details}\".");
 			}
 			else
 			{
-				this._Logger.Error($"VPN \"{this.Configuration.Name}\": Error reaching connection test host \"{this.Configuration.ConnectionTestHost}\": \"{value.Details}\".");
+				this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error reaching connection test host \"{this.Configuration.ConnectionTestHost}\": \"{value.Details}\".");
 			}
 		}
 
@@ -388,7 +389,7 @@ namespace Logixware.SoftEther.Client.Daemon
 				return await ReturnResult().ConfigureAwait(false);
 			}
 
-			this._ConnectionVerificationResult.OnNext(this._ConnectionVerifier.Verify(this.Configuration.ConnectionTestHost));
+			this._ConnectionVerificationResult.OnNext(this._VpnConnectionVerifier.Verify(this.Configuration.ConnectionTestHost));
 			this._ReachableState.OnNext(this._ConnectionVerificationResult.Value.Reachable);
 
 			return await ReturnResult().ConfigureAwait(false);

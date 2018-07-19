@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>Label</key>
-			<string>de.logixware.SoftEther.Client.Daemon</string>
-		<key>RunAtLoad</key>
-			<true />
-		<key>KeepAlive</key>
-			<true />
-		<key>EnvironmentVariables</key>
-			<dict>
-				<key>PATH</key>
-				<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin</string>
-			</dict>
-		<key>ProgramArguments</key>
-			<array>
-				<string>/Applications/SoftEther VPN Client.app/Contents/Resources/daemon/Logixware.SoftEther.Client.Daemon
-				</string>
-			</array>
-		<key>WorkingDirectory</key>
-			<string>/Applications/SoftEther VPN Client.app/Contents/Resources/daemon</string>
-		<key>StandardOutPath</key>
-			<string>/var/log/logixware/vpnclient/output.log</string>
-		<key>StandardErrorPath</key>
-			<string>/var/log/logixware/vpnclient/error.log</string>
-	</dict>
+<dict>
+	<key>Label</key>
+		<string>de.logixware.SoftEther.Client.Daemon</string>
+	<key>RunAtLoad</key>
+		<true/>
+	<key>KeepAlive</key>
+		<true/>
+	<key>EnvironmentVariables</key>
+		<dict>
+			<key>PATH</key>
+			<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin</string>
+		</dict>
+	<key>ProgramArguments</key>
+		<array>
+			<string>/Library/Application Support/Logixware/Logixware.SoftEther.Client.Daemon/Logixware.SoftEther.Client.Daemon</string>
+		</array>
+	<key>WorkingDirectory</key>
+		<string>/Library/Application Support/Logixware/Logixware.SoftEther.Client.Daemon</string>
+	<key>StandardOutPath</key>
+		<string>/var/log/logixware/Logixware.SoftEther.Client.Daemon/output.log</string>
+	<key>StandardErrorPath</key>
+		<string>/var/log/logixware/Logixware.SoftEther.Client.Daemon/error.log</string>
+</dict>
 </plist>

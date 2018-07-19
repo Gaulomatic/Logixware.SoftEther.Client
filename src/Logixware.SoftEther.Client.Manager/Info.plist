@@ -1,33 +1,32 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key>
-	<string>SoftEther VPN Client</string>
-	<key>CFBundleIdentifier</key>
-	<string>de.logixware.SoftEther.Client.Manager</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0.0.16</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.13</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleIdentifier</key>
+	<string>de.logixware.SoftEther.Client.Manager</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Logixware SoftEther Client Manager</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.1.18</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.1.18</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.13</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>${AuthorCopyright:HtmlEncode}</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>Tobias Punke</string>
 	<key>NSMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
-
 </dict>
 </plist>

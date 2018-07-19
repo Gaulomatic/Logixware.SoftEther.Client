@@ -1,20 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-using Logixware.SoftEther.Client.VpnService;
-using Logixware.SoftEther.Client.Daemon.Platform;
-
-using Logixware.SoftEther.Client.Shell;
-using Logixware.SoftEther.Client.Shell.Platform;
-
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Hosting
 {
 	public class Program
 	{
@@ -30,6 +22,7 @@ namespace Logixware.SoftEther.Client.Daemon
 					configHost.SetBasePath(Directory.GetCurrentDirectory());
 					configHost.AddJsonFile("hostsettings.json", optional: true);
 					configHost.AddEnvironmentVariables(prefix: "PREFIX_");
+					configHost.ConfigureHostConfiguration();
 					configHost.AddCommandLine(args);
 				})
 
@@ -38,6 +31,7 @@ namespace Logixware.SoftEther.Client.Daemon
 					configApp.AddJsonFile("appsettings.json", optional: true);
 					configApp.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true);
 					configApp.AddEnvironmentVariables(prefix: "PREFIX_");
+					configApp.ConfigureAppConfiguration(hostContext);
 					configApp.AddCommandLine(args);
 
 					__ConfigurationRoot = configApp.Build();
@@ -45,29 +39,7 @@ namespace Logixware.SoftEther.Client.Daemon
 
 				.ConfigureServices((hostContext, services) =>
 				{
-					services.AddLogging();
-					services.AddHostedService<ProgramService>();
-					services.AddSingleton(services);
-					services.AddSingleton<IClientConfiguration, ClientConfiguration>();
-					services.AddSingleton<ICommandLineInterface, CommandLineInterface>();
-					services.AddSingleton<IConnectionVerifier, PingConnectionVerifier>();
-
-					services.AddSingleton(__ConfigurationRoot);
-
-					if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-					{
-						services.AddSingleton<IShell, BashShell>();
-						services.AddSingleton<IPlatform, MacPlatform>();
-					}
-					else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-					{
-						services.AddSingleton<IShell, BashShell>();
-						services.AddSingleton<IPlatform, LinuxPlatform>();
-					}
-					else
-					{
-						throw new NotSupportedException("Platform not supported.");
-					}
+					services.ConfigureServices(__ConfigurationRoot);
 				})
 
 				.ConfigureLogging((hostContext, configLogging) =>

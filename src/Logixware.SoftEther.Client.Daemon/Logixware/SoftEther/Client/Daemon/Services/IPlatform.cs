@@ -1,9 +1,9 @@
-using System;
 using System.Net.NetworkInformation;
 
 using Logixware.SoftEther.Client.Shell;
+using Logixware.SoftEther.Client.Daemon.Entities;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
 	public interface IPlatform
 	{

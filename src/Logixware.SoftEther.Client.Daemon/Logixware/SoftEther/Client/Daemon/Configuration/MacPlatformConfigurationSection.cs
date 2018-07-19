@@ -1,6 +1,6 @@
 using System;
 
-namespace Logixware.SoftEther.Client.Daemon.Platform
+namespace Logixware.SoftEther.Client.Daemon.Configuration
 {
 	public class MacPlatformConfigurationSection
 	{

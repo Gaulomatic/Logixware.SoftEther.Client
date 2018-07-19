@@ -2,16 +2,16 @@ using System;
 using System.Threading;
 using System.Net.NetworkInformation;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 using Logixware.SoftEther.Client.Shell;
 
-//using System.Runtime.InteropServices;
+using Logixware.SoftEther.Client.Daemon.Entities;
+using Logixware.SoftEther.Client.Daemon.Configuration;
 
-namespace Logixware.SoftEther.Client.Daemon.Platform
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
-
 	public class MacPlatform : IPlatform
 	{
 		private readonly ILogger<MacPlatform> _Logger;

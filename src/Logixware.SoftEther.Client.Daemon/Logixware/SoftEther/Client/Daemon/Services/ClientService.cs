@@ -13,16 +13,17 @@ using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.VpnService;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
-	public class ProgramService : IHostedService
+	public class ClientService : IClientService, IDisposable
 	{
-		private readonly ILogger<ProgramService> _Logger;
+		private readonly ILogger<ClientService> _Logger;
 		private readonly ILogger<VirtualNetworkService> _NetworkLogger;
 		private readonly IApplicationLifetime _AppLifetime;
 		private readonly IClientConfiguration _Configuration;
 		private readonly ICommandLineInterface _Cli;
-		private readonly IConnectionVerifier _ConnectionVerifier;
+		private readonly IVpnConnectionVerifier _VpnConnectionVerifier;
+		private readonly IInternetConnectionVerifier _InternetConnectionVerifierVerifier;
 		private readonly IPlatform _Platform;
 
 		private readonly Subject<Object> _ClientServiceRestarting;
@@ -30,27 +31,30 @@ namespace Logixware.SoftEther.Client.Daemon
 
 		private readonly Dictionary<VirtualNetworkService, Int32> _Networks;
 		private Boolean? _IsInternetConnected;
-		private Boolean _Run;
 
-		private Timer _Timer;
+		private CancellationTokenSource _RunCancellationTokenSource;
+		private Boolean _IsRunning;
+		private Task _RunTask;
 
-		public ProgramService
+		public ClientService
 		(
-			ILogger<ProgramService> logger,
-			ILogger<VirtualNetworkService> networklogger,
+			ILogger<ClientService> logger,
+			ILogger<VirtualNetworkService> networkLogger,
 			IApplicationLifetime appLifetime,
 			IClientConfiguration configuration,
 			ICommandLineInterface cli,
-			IConnectionVerifier connectionVerifier,
+			IInternetConnectionVerifier internetConnectionVerifierVerifier,
+			IVpnConnectionVerifier vpnConnectionVerifier,
 			IPlatform platform
 		)
 		{
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			this._NetworkLogger = networklogger ?? throw new ArgumentNullException(nameof(networklogger));
+			this._NetworkLogger = networkLogger ?? throw new ArgumentNullException(nameof(networkLogger));
 			this._AppLifetime = appLifetime ?? throw new ArgumentNullException(nameof(appLifetime));
 			this._Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			this._Cli = cli ?? throw new ArgumentNullException(nameof(cli));
-			this._ConnectionVerifier = connectionVerifier ?? throw new ArgumentNullException(nameof(connectionVerifier));
+			this._InternetConnectionVerifierVerifier = internetConnectionVerifierVerifier ?? throw new ArgumentNullException(nameof(internetConnectionVerifierVerifier));
+			this._VpnConnectionVerifier = vpnConnectionVerifier ?? throw new ArgumentNullException(nameof(vpnConnectionVerifier));
 			this._Platform = platform ?? throw new ArgumentNullException(nameof(platform));
 
 			this._ClientServiceRestarting = new Subject<Object>();
@@ -58,37 +62,33 @@ namespace Logixware.SoftEther.Client.Daemon
 
 			this._Networks = new Dictionary<VirtualNetworkService, Int32>();
 			this._IsInternetConnected = null;
-			this._Run = false;
 		}
 
 		public Task StartAsync(CancellationToken cancellationToken)
 		{
-			this._AppLifetime.ApplicationStarted.Register(this.OnStarted);
-			this._AppLifetime.ApplicationStopping.Register(this.OnStopping);
-			this._AppLifetime.ApplicationStopped.Register(this.OnStopped);
+			if (this._IsRunning)
+			{
+				throw new InvalidOperationException("Service is already running.");
+			}
 
-			return Task.CompletedTask;
-		}
+			this._IsRunning = true;
+			this._RunCancellationTokenSource = new CancellationTokenSource();
 
-		private void OnStarted()
-		{
-			this._Logger.Inform("Starting application...");
+			this._Logger?.Inform("Initializing platform.");
+			this._Platform.Initialize();
+
+			this._Logger?.Inform("Starting VPN client service...");
+			this._Cli.StartClient();
 
 			var __ValidNetworks = this._Configuration.GetValidNetworks(this._Cli).ToList();
 
 			if (__ValidNetworks.Count == 0)
 			{
-				this._Logger.Critical("No valid network found.");
+				this._Logger?.Critical("No valid network found.");
 				this._AppLifetime.StopApplication();
 
-				return;
+				return Task.CompletedTask;
 			}
-
-			this._Logger.Inform("Initializing platform.");
-			this._Platform.Initialize();
-
-			this._Logger.Inform("Starting VPN client service...");
-			this._Cli.StartClient();
 
 			foreach (var __Network in __ValidNetworks)
 			{
@@ -96,7 +96,7 @@ namespace Logixware.SoftEther.Client.Daemon
 
 					this._NetworkLogger,
 					this._Cli,
-					this._ConnectionVerifier,
+					this._VpnConnectionVerifier,
 					this._Platform,
 					this._ClientServiceRestarting,
 					this._ClientServiceRestarted,
@@ -105,35 +105,28 @@ namespace Logixware.SoftEther.Client.Daemon
 				), 0);
 			}
 
-			this._Run = true;
-			this._Timer = new Timer(this.Run, null, TimeSpan.Zero, Timeout.InfiniteTimeSpan);
+			this._RunTask = Task.Run(async () =>
+			{
+				while (true)
+				{
+					await this.TickAsync(this._RunCancellationTokenSource.Token);
+					await Task.Delay(TimeSpan.FromSeconds(5), this._RunCancellationTokenSource.Token);
+				}
+
+				// ReSharper disable once FunctionNeverReturns
+			}, this._RunCancellationTokenSource.Token);
+
+			return Task.CompletedTask;
 		}
 
-		private async void Run(Object parameter)
+		private async Task TickAsync(CancellationToken cancellationToken)
 		{
-			while (this._Run)
-			{
-				await this.TickAsync(parameter).ConfigureAwait(false);
-				Thread.Sleep(5000);
-			}
-		}
-
-		private async Task TickAsync(Object parameter)
-		{
-			if (!this._Run)
-			{
-				this._Timer.Dispose();
-				this._AppLifetime.StopApplication();
-
-				return;
-			}
-
-			if (await InternetConnection.IsAvailibleAsync(this._Configuration.Settings.InternetConnectionTestUrl).ConfigureAwait(false))
+			if (await this._InternetConnectionVerifierVerifier.IsAvailableAsync(this._Configuration.Settings.InternetConnectionTestUrl).ConfigureAwait(false))
 			{
 				if (this._IsInternetConnected == null || !(Boolean) this._IsInternetConnected)
 				{
 					this._IsInternetConnected = true;
-					this._Logger.Inform("Connected to the internet");
+					this._Logger?.Inform("Connected to the internet");
 				}
 
 				var __Results = new List<ReachableResult>();
@@ -184,7 +177,7 @@ namespace Logixware.SoftEther.Client.Daemon
 
 				__NonReachableServices.ForEach(r =>
 				{
-					this._Logger.Error($"VPN \"{r.Network.Configuration.Name}\": Connection test host \"{r.Network.Configuration.ConnectionTestHost}\" did not respond {this._Networks[r.Network]} times.");
+					this._Logger?.Error($"VPN \"{r.Network.Configuration.Name}\": Connection test host \"{r.Network.Configuration.ConnectionTestHost}\" did not respond {this._Networks[r.Network]} times.");
 				});
 
 				if (__ReachableServices.Count == 0 && __DisconnectedServices.Count == 0)
@@ -201,7 +194,7 @@ namespace Logixware.SoftEther.Client.Daemon
 				if (this._IsInternetConnected == null || (Boolean) this._IsInternetConnected)
 				{
 					this._IsInternetConnected = false;
-					this._Logger.Inform("Not connected to the internet");
+					this._Logger?.Inform("Not connected to the internet");
 				}
 
 				this.ResetAttemptCounters(this._Networks.Keys);
@@ -218,7 +211,7 @@ namespace Logixware.SoftEther.Client.Daemon
 
 		private void RestartClientService()
 		{
-			this._Logger.Warn("Restarting the VPN client...");
+			this._Logger?.Warn("Restarting the VPN client...");
 
 			this._ClientServiceRestarting.OnNext(null);
 
@@ -228,36 +221,29 @@ namespace Logixware.SoftEther.Client.Daemon
 			this._ClientServiceRestarted.OnNext(null);
 		}
 
-		public Task StopAsync(CancellationToken cancellationToken)
+		public async Task StopAsync(CancellationToken cancellationToken)
 		{
-			this._Logger.Inform("Shutting down application...");
-			this._Run = false;
+			if (!this._IsRunning)
+			{
+				throw new InvalidOperationException("Service not running.");
+			}
 
-			return Task.CompletedTask;
-		}
+			this._RunCancellationTokenSource.Cancel();
+			this._IsRunning = false;
 
-		private void OnStopping()
-		{
-			this._Logger.Inform("Stoppping VPN client service...");
 			this._Cli.StopClient();
+
+			if (this._RunTask != null && this._RunTask.Status == TaskStatus.Running)
+			{
+				await this._RunTask;
+			}
 		}
 
-		private void OnStopped()
+		public void Dispose()
 		{
-			this._Logger.Inform("Application shut down. C ya.");
+			this._ClientServiceRestarting?.Dispose();
+			this._ClientServiceRestarted?.Dispose();
+			this._RunCancellationTokenSource?.Dispose();
 		}
-
-//		private Task Sleep(int millisecondsTimeout)
-//		{
-//			var taskCompletionSource = new TaskCompletionSource<bool>();
-//
-//			ThreadPool.QueueUserWorkItem((state) =>
-//			{
-//				Thread.Sleep(millisecondsTimeout);
-//				taskCompletionSource.SetResult(true);
-//			}, null);
-//
-//			return taskCompletionSource.Task;
-//		}
 	}
 }

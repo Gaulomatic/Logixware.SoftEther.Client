@@ -1,6 +1,6 @@
 using System;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Entities
 {
 	public class VirtualNetwork
 	{

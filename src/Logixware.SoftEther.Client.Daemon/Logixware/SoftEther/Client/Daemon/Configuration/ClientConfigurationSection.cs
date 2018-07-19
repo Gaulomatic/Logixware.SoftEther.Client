@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Logixware.SoftEther.Client.Daemon
+using Logixware.SoftEther.Client.Daemon.Entities;
+
+namespace Logixware.SoftEther.Client.Daemon.Configuration
 {
 	public class ClientConfigurationSection
 	{

@@ -1,5 +1,5 @@
 [Unit]
-Description=SoftEther VPN Client Daemon
+Description=Logixware SoftEther Client Daemon
 After=network.target
 StartLimitIntervalSec=0
 
@@ -8,8 +8,8 @@ Type=simple
 Restart=always
 RestartSec=10
 User=root
-ExecStart=/usr/bin/env /opt/logixware/Logixware.SoftEther.Client/daemon/Logixware.SoftEther.Client.Daemon
-WorkingDirectory=/opt/logixware/Logixware.SoftEther.Client/daemon
+ExecStart=/usr/bin/env /opt/logixware/Logixware.SoftEther.Client.Daemon
+WorkingDirectory=/opt/logixware/Logixware.SoftEther.Client.Daemon
 
 [Install]
 WantedBy=multi-user.target

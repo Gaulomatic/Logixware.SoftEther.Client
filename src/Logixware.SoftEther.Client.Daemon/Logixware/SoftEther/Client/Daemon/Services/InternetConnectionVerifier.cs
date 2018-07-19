@@ -2,11 +2,11 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
-	public class InternetConnection
+	public class InternetConnectionVerifier : IInternetConnectionVerifier
 	{
-		public static Boolean IsAvailible(String url)
+		public Boolean IsAvailable(String url)
 		{
 			try
 			{
@@ -22,7 +22,7 @@ namespace Logixware.SoftEther.Client.Daemon
 			}
 		}
 
-		public static async Task<Boolean> IsAvailibleAsync(String url)
+		public async Task<Boolean> IsAvailableAsync(String url)
 		{
 			try
 			{

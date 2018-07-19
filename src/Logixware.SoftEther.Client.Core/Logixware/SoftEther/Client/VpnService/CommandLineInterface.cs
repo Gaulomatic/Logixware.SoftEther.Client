@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
@@ -102,12 +103,12 @@ namespace Logixware.SoftEther.Client.VpnService
 			if (__StartExecution.Succeeded)
 			{
 				var __Message = $"Successfully started the VPN client: {__StartExecution.Result}";
-				this._Logger.Inform(__Message);
+				this._Logger?.Inform(__Message);
 			}
 			else
 			{
 				var __Message = $"Error starting the VPN client: {__StartExecution.Result}";
-				this._Logger.Error(__Message);
+				this._Logger?.Error(__Message);
 			}
 		}
 
@@ -119,12 +120,12 @@ namespace Logixware.SoftEther.Client.VpnService
 			if (__StopExecution.Succeeded)
 			{
 				var __Message = $"Successfully stopped the VPN client: {__StopExecution.Result}";
-				this._Logger.Inform(__Message);
+				this._Logger?.Inform(__Message);
 			}
 			else
 			{
 				var __Message = $"Error stopping the VPN client: {__StopExecution.Result}";
-				this._Logger.Error(__Message);
+				this._Logger?.Error(__Message);
 			}
 		}
 

@@ -8,7 +8,10 @@ using Microsoft.Extensions.Configuration;
 
 using Logixware.SoftEther.Client.VpnService;
 
-namespace Logixware.SoftEther.Client.Daemon
+using Logixware.SoftEther.Client.Daemon.Entities;
+using Logixware.SoftEther.Client.Daemon.Configuration;
+
+namespace Logixware.SoftEther.Client.Daemon.Services
 {
 	public class ClientConfiguration : IClientConfiguration
 	{

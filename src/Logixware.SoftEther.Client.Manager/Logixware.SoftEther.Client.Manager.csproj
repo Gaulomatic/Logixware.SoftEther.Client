@@ -7,7 +7,7 @@
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>Logixware.SoftEther.Client.Manager</RootNamespace>
-    <AssemblyName>SoftEther VPN Client</AssemblyName>
+    <AssemblyName>Logixware SoftEther Client Manager</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <MonoMacResourcePrefix>Resources</MonoMacResourcePrefix>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
@@ -44,7 +44,7 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <EnableCodeSigning>false</EnableCodeSigning>
+    <EnableCodeSigning>true</EnableCodeSigning>
     <CodeSigningKey>Mac Developer</CodeSigningKey>
     <CreatePackage>false</CreatePackage>
     <EnablePackageSigning>false</EnablePackageSigning>
@@ -54,6 +54,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <AOTMode>None</AOTMode>
     <LangVersion>Latest</LangVersion>
+    <PackageSigningKey>3rd Party Mac Developer Installer</PackageSigningKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -112,16 +113,6 @@
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
     <InterfaceDefinition Include="Resources\en.lproj\Main.storyboard" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\daemon\.gitkeep"/>
-    <Content Include="Resources\vpnclient\.gitkeep"/>
-    <!--<Content Include="Resources\daemon\**" />-->
-    <!--<Content Include="Resources\vpnclient\**" />-->
-    <!--<Content Remove="Resources\daemon\.gitkeep"/>-->
-    <!--<Content Remove="Resources\vpnclient\.gitkeep"/>-->
-    <!--<Compile Remove="Resources\daemon\**"/>-->
-    <!--<Compile Remove="Resources\daemon\**"/>-->
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

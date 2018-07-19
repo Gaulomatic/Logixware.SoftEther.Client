@@ -1,5 +1,7 @@
 using System;
 
+using Logixware.SoftEther.Client.Daemon.Services;
+
 namespace Logixware.SoftEther.Client.Daemon
 {
 	public struct ReachableResult

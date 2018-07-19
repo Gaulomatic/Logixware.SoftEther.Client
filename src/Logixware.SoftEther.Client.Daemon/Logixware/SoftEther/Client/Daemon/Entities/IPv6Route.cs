@@ -1,9 +1,9 @@
 using System;
 
-namespace Logixware.SoftEther.Client.Daemon
+namespace Logixware.SoftEther.Client.Daemon.Entities
 {
 	// ReSharper disable once InconsistentNaming
-	public class IPv4Route
+	public class IPv6Route
 	{
 		public String Network { get; set; }
 		public Int32 Prefix { get; set; }
