@@ -93,6 +93,7 @@
     <ImageAsset Include="Assets.xcassets\Contents.json" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Connections" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
@@ -101,18 +102,35 @@
     <None Include="Properties\AssemblyInfo\AssemblyVersion.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\View.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo\AssemblyInfo.cs" />
-    <Compile Include="ViewController.cs" />
-    <Compile Include="ViewController.designer.cs">
-      <DependentUpon>ViewController.cs</DependentUpon>
+    <Compile Include="MainViewController.cs" />
+    <Compile Include="MainViewController.designer.cs">
+      <DependentUpon>MainViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowController.cs" />
+    <Compile Include="MainWindowController.designer.cs">
+      <DependentUpon>MainWindowController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectionsViewController.cs" />
+    <Compile Include="ConnectionsViewController.designer.cs">
+      <DependentUpon>ConnectionsViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InterfacesViewController.cs" />
+    <Compile Include="InterfacesViewController.designer.cs">
+      <DependentUpon>InterfacesViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Main.storyboard" />
-    <InterfaceDefinition Include="Resources\en.lproj\Main.storyboard" />
+    <InterfaceDefinition Include="Resources\Connections.storyboard" />
+    <InterfaceDefinition Include="Resources\Interfaces.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\.DS_Store" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
 </Project>

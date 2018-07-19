@@ -10,7 +10,7 @@
 
 [assembly: System.Reflection.AssemblyCopyright("Copyright © 2017 - 2018 Tobias Punke.")]
 [assembly: System.Reflection.AssemblyVersion("1.0.0.0")]
-[assembly: System.Reflection.AssemblyFileVersion("1.0.0.12")]
-[assembly: System.Reflection.AssemblyInformationalVersion("1.0.0.12")]
+[assembly: System.Reflection.AssemblyFileVersion("1.0.0.13")]
+[assembly: System.Reflection.AssemblyInformationalVersion("1.0.0.13")]
 
 

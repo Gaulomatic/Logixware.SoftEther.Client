@@ -11,9 +11,9 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="SoftEther VPN Client Manager" id="1Xt-HY-uBw">
+                            <menuItem title="Logixware SoftEther Client Manager" id="1Xt-HY-uBw">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="SoftEther VPN Client Manager" systemMenu="apple" id="uQy-DD-JDr">
+                                <menu key="submenu" title="Logixware SoftEther Client Manager" systemMenu="apple" id="uQy-DD-JDr">
                                     <items>
                                         <menuItem title="About Manager" id="5kV-Vb-QxS">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -650,47 +650,96 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="188" y="240" width="355" height="251"/>
-                        <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                <windowController showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="alertPanel" titlebarAppearsTransparent="YES" id="IQv-IB-iLA">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
+                        <rect key="contentRect" x="400" y="900" width="1280" height="720"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="3008" height="1670"/>
+                        <toolbar key="toolbar" implicitIdentifier="B7147B4E-0EA3-4FAA-8A4F-1B9A46226DEF" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="Whz-hv-HsF" userLabel="Section To Display">
+                            <allowedToolbarItems>
+                                <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="wga-k0-ir7"/>
+                                <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="j4M-HS-5FD"/>
+                                <toolbarItem implicitItemIdentifier="A072768F-E29E-4F07-8062-20EE279B1E13" label="Search" paletteLabel="Search" id="s50-wT-JTz">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="96" height="22"/>
+                                    <size key="maxSize" width="250" height="22"/>
+                                    <searchField key="view" wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" id="Iyr-tf-YLC">
+                                        <rect key="frame" x="0.0" y="14" width="219" height="22"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="x4p-Y8-dax">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </searchFieldCell>
+                                    </searchField>
+                                </toolbarItem>
+                                <toolbarItem implicitItemIdentifier="CD2859D7-ACA0-4F31-BF92-FB059DB52D37" label="Section" paletteLabel="Section" id="CLK-7u-97q">
+                                    <nil key="toolTip"/>
+                                    <size key="minSize" width="70" height="24"/>
+                                    <size key="maxSize" width="220" height="24"/>
+                                    <segmentedControl key="view" wantsLayer="YES" verticalHuggingPriority="750" id="eoU-CL-lOr" userLabel="SectionSelector">
+                                        <rect key="frame" x="0.0" y="14" width="219" height="24"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="texturedSquare" trackingMode="selectOne" id="Vtl-wb-K45">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment label="Connections" width="107" selected="YES"/>
+                                                <segment label="Interfaces" width="106" tag="1"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="SectionSelectorChanged:" target="B8D-0N-5wS" id="cyZ-ZB-M5w"/>
+                                        </connections>
+                                    </segmentedControl>
+                                </toolbarItem>
+                            </allowedToolbarItems>
+                            <defaultToolbarItems>
+                                <toolbarItem reference="wga-k0-ir7"/>
+                                <toolbarItem reference="CLK-7u-97q"/>
+                                <toolbarItem reference="j4M-HS-5FD"/>
+                                <toolbarItem reference="s50-wT-JTz"/>
+                            </defaultToolbarItems>
+                        </toolbar>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="gZC-63-kYU"/>
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
+                        <outlet property="SctionToDisplay" destination="Whz-hv-HsF" id="UV2-QT-zNi"/>
+                        <outlet property="Section" destination="Vtl-wb-K45" id="6q9-Og-QTx"/>
+                        <outlet property="SectionSelector" destination="eoU-CL-lOr" id="6jm-lQ-bAy"/>
+                        <outlet property="Sel" destination="eoU-CL-lOr" id="FDH-L5-y3m"/>
+                        <segue destination="n93-g8-wqY" kind="relationship" relationship="window.shadowedContentViewController" id="aD2-0R-0M5"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="249" y="274"/>
+            <point key="canvasLocation" x="74" y="488"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="hIz-AP-VOD">
+        <!--Main View Controller-->
+        <scene sceneID="QyS-dI-m0i">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="473" height="110"/>
+                <viewController id="n93-g8-wqY" customClass="MainViewController" sceneMemberID="viewController">
+                    <view key="view" id="7eJ-at-9k1">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y3t-rc-SbX">
-                                <rect key="frame" x="18" y="73" width="484" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="This is work in progress. In other words: just a dummy. So far." id="wG1-0s-CNF">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                        </subviews>
                     </view>
                 </viewController>
-                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="pEt-eF-GpW" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="244.5" y="730"/>
+            <point key="canvasLocation" x="74" y="1185"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="8gw-R8-Hd9">
+            <objects>
+                <viewController id="EeO-ud-ef7" sceneMemberID="viewController">
+                    <view key="view" id="k35-qJ-5Gc">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="tqB-DS-Eao" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
         </scene>
     </scenes>
 </document>
