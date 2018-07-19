@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=10
 User=root
-ExecStart=/usr/bin/env /opt/logixware/Logixware.SoftEther.Client.Daemon
+ExecStart=/usr/bin/env /opt/logixware/Logixware.SoftEther.Client.Daemon/Logixware.SoftEther.Client.Daemon
 WorkingDirectory=/opt/logixware/Logixware.SoftEther.Client.Daemon
 
 [Install]
