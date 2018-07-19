@@ -27,7 +27,7 @@ It starts the VPN client, handles IP address, static route management and `vpncl
 
 ### Installer
 
-- The is a `.pkg` package [available](https://github.com/Gaulomatic/Logixware.SoftEther.Client/releases) for installation on macOS.
+- There is a `.pkg` package [available](https://github.com/Gaulomatic/Logixware.SoftEther.Client/releases) for installation on macOS.
 
 ### Manual installation on macOS
 
