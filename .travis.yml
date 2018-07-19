@@ -1,6 +1,6 @@
 language: csharp
 mono: none
-solution: Logixware.SoftEther.Client.sln
+solution: Logixware.SoftEther.Client.Daemon.sln
 dotnet: 2.1.3
 dist: trusty
 sudo: required
