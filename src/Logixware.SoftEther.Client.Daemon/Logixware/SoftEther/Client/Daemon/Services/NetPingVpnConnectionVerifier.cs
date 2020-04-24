@@ -4,11 +4,11 @@ using System.Net.NetworkInformation;
 
 namespace Logixware.SoftEther.Client.Daemon.Services
 {
-	public class PingVpnConnectionVerifier : IVpnConnectionVerifier
+	public class NetPingVpnConnectionVerifier : IVpnConnectionVerifier
 	{
 		private IClientConfiguration _Configuration;
 
-		public PingVpnConnectionVerifier(IClientConfiguration configuration)
+		public NetPingVpnConnectionVerifier(IClientConfiguration configuration)
 		{
 			this._Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
@@ -17,22 +17,25 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			const String __Data = "a quick brown fox jumped over the lazy dog";
 			const Int32 __Timeout = 1024;
 
-			var __PingSender = new Ping();
+			using var __Ping = new Ping();
 			var __Options = new PingOptions
 			{
 				DontFragment = true
 			};
+
+			System.Threading.Thread.Sleep(5000);
 
 			var __Buffer = Encoding.ASCII.GetBytes(__Data);
 			var __Status = IPStatus.Unknown;
 
 			try
 			{
-				var __Reply = __PingSender.Send(host, __Timeout, __Buffer, __Options);
+				var __Reply = __Ping.Send(host, __Timeout, __Buffer, __Options);
 				__Status = __Reply?.Status ?? IPStatus.Unknown;
 			}
-			catch
+			catch (Exception ex)
 			{
+				Console.WriteLine(ex.Message);
 				__Status = IPStatus.Unknown;
 			}
 

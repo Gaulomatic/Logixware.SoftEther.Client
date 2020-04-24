@@ -33,6 +33,12 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		{
 		}
 
+		public ExecutionResult Ping(String host)
+		{
+			var __Command = $"ping -c 1 -t 4 {host}";
+			return this._Shell.ExecuteCommand(__Command, false);
+		}
+
 		public ExecutionResult AssignIPAddress(NetworkInterface networkInterface, IPv4Information info)
 		{
 			var __Command = $"ifconfig {networkInterface.Name} inet {info.Address} netmask {info.Mask}";

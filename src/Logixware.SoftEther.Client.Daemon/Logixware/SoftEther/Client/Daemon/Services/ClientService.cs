@@ -19,7 +19,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 	{
 		private readonly ILogger<ClientService> _Logger;
 		private readonly ILogger<VirtualNetworkService> _NetworkLogger;
-		private readonly IApplicationLifetime _AppLifetime;
+		private readonly IHostApplicationLifetime _AppLifetime;
 		private readonly IClientConfiguration _Configuration;
 		private readonly ICommandLineInterface _Cli;
 		private readonly IVpnConnectionVerifier _VpnConnectionVerifier;
@@ -40,7 +40,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		(
 			ILogger<ClientService> logger,
 			ILogger<VirtualNetworkService> networkLogger,
-			IApplicationLifetime appLifetime,
+			IHostApplicationLifetime appLifetime,
 			IClientConfiguration configuration,
 			ICommandLineInterface cli,
 			IInternetConnectionVerifier internetConnectionVerifierVerifier,
@@ -77,6 +77,9 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			this._Logger?.Inform("Initializing platform.");
 			this._Platform.Initialize();
 
+			this._Logger?.Inform("Stopping VPN client service, if currently running...");
+			this._Cli.StopClient();
+
 			this._Logger?.Inform("Starting VPN client service...");
 			this._Cli.StartClient();
 
@@ -109,8 +112,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			{
 				while (true)
 				{
-					await this.TickAsync(this._RunCancellationTokenSource.Token);
 					await Task.Delay(TimeSpan.FromSeconds(5), this._RunCancellationTokenSource.Token);
+					await this.TickAsync(this._RunCancellationTokenSource.Token);
 				}
 
 				// ReSharper disable once FunctionNeverReturns

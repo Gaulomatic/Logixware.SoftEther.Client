@@ -46,6 +46,11 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				throw new InvalidOperationException("No virtual networks defined.");
 			}
 
+			if (this._ProvidedConfiguration.Shell == null)
+			{
+				throw new InvalidOperationException("No shell configuration defined.");
+			}
+
 			this.Settings = new ClientConfigurationSection
 			{
 				Networks = new List<VirtualNetwork>()

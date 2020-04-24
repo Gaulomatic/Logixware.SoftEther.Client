@@ -13,13 +13,13 @@ namespace Logixware.SoftEther.Client.Daemon.Hosting
 	public class ProgramService : IHostedService
 	{
 		private readonly ILogger<ProgramService> _Logger;
-		private readonly IApplicationLifetime _AppLifetime;
+		private readonly IHostApplicationLifetime _AppLifetime;
 		private readonly IClientService _ClientService;
 
 		public ProgramService
 		(
 			ILogger<ProgramService> logger,
-			IApplicationLifetime appLifetime,
+			IHostApplicationLifetime appLifetime,
 			IClientService nasService
 		)
 		{

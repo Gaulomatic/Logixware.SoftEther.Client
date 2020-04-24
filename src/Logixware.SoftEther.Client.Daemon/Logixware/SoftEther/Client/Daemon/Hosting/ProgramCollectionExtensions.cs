@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Logixware.SoftEther.Client.Shell;
-using Logixware.SoftEther.Client.Shell.Platform;
 using Logixware.SoftEther.Client.VpnService;
 
 using Logixware.SoftEther.Client.Daemon.Services;
@@ -60,16 +59,17 @@ namespace Logixware.SoftEther.Client.Daemon.Hosting
 			services.AddSingleton<IInternetConnectionVerifier, InternetConnectionVerifier>();
 			services.AddSingleton<IClientConfiguration, ClientConfiguration>();
 			services.AddSingleton<ICommandLineInterface, CommandLineInterface>();
-			services.AddSingleton<IVpnConnectionVerifier, PingVpnConnectionVerifier>();
+			services.AddSingleton<IShell, BashShell>();
+
+			// services.AddSingleton<IVpnConnectionVerifier, NetPingVpnConnectionVerifier>();
+			services.AddSingleton<IVpnConnectionVerifier, ConsolePingVpnConnectionVerifier>();
 
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 			{
-				services.AddSingleton<IShell, BashShell>();
 				services.AddSingleton<IPlatform, MacPlatform>();
 			}
 			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 			{
-				services.AddSingleton<IShell, BashShell>();
 				services.AddSingleton<IPlatform, LinuxPlatform>();
 			}
 			else

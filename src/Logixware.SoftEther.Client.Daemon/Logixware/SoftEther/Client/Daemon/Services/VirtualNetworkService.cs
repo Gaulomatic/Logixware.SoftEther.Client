@@ -105,7 +105,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				.SkipUntil(__IsInitialized)
 				.NotNull()
 				.DistinctUntilChanged()
-				.Subscribe(this.OnIPv4AddressAssignedChanged, this.OnIPv4AddressAssignmentError);
+				.Subscribe(this.OnIPv4AddressAssignedChanged);
 
 			this._IPv6AddressAssigned = new BehaviorSubject<Boolean?>(null);
 			this._IPv6AddressAssigned
@@ -114,7 +114,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				.SkipUntil(__IsInitialized)
 				.NotNull()
 				.DistinctUntilChanged()
-				.Subscribe(this.OnIPv6AddressAssignedChanged, this.OnIPv6AddressAssignmentError);
+				.Subscribe(this.OnIPv6AddressAssignedChanged);
 
 			this._IPv4RoutesAssigned = new BehaviorSubject<Boolean?>(null);
 			this._IPv4RoutesAssigned
@@ -123,7 +123,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				.SkipUntil(__IsInitialized)
 				.NotNull()
 				.DistinctUntilChanged()
-				.Subscribe(this.OnIPv4RoutesAppliedChanged, this.OnIPv4RoutesAssignmentError);
+				.Subscribe(this.OnIPv4RoutesAppliedChanged);
 
 			this._IPv6RoutesAssigned = new BehaviorSubject<Boolean?>(null);
 			this._IPv6RoutesAssigned
@@ -132,7 +132,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				.SkipUntil(__IsInitialized)
 				.NotNull()
 				.DistinctUntilChanged()
-				.Subscribe(this.OnIPv6RoutesAppliedChanged, this.OnIPv6RoutesAssignmentError);
+				.Subscribe(this.OnIPv6RoutesAppliedChanged);
 
 			this._ConfigurationState = new BehaviorSubject<ConfigurationState?>(null);
 			this._ConfigurationState
@@ -389,8 +389,9 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				return await ReturnResult().ConfigureAwait(false);
 			}
 
-			this._ConnectionVerificationResult.OnNext(this._VpnConnectionVerifier.Verify(this.Configuration.ConnectionTestHost));
-			this._ReachableState.OnNext(this._ConnectionVerificationResult.Value.Reachable);
+			var __VerificationResult = this._VpnConnectionVerifier.Verify(this.Configuration.ConnectionTestHost);
+			this._ConnectionVerificationResult.OnNext(__VerificationResult);
+			this._ReachableState.OnNext(__VerificationResult.Reachable);
 
 			return await ReturnResult().ConfigureAwait(false);
 		}
@@ -439,7 +440,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				}
 				else
 				{
-					this._IPv4AddressAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv4AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 
@@ -453,7 +454,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				}
 				else
 				{
-					this._IPv6AddressAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv6AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 		}
@@ -471,7 +472,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				}
 				else
 				{
-					this._IPv4AddressAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv4AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 
@@ -485,7 +486,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				}
 				else
 				{
-					this._IPv6AddressAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv6AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 		}
@@ -500,7 +501,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 					if (__Execution.Succeeded) continue;
 
-					this._IPv4RoutesAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv4RoutesAssignmentError(new Exception(__Execution.Result));
 					return;
 				}
 
@@ -518,7 +519,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 					if (__Execution.Succeeded) continue;
 
-					this._IPv4RoutesAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv4RoutesAssignmentError(new Exception(__Execution.Result));
 					return;
 				}
 
@@ -536,7 +537,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 					if (__Execution.Succeeded) continue;
 
-					this._IPv6RoutesAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv6RoutesAssignmentError(new Exception(__Execution.Result));
 					return;
 				}
 
@@ -554,7 +555,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 					if (__Execution.Succeeded) continue;
 
-					this._IPv6RoutesAssigned.OnError(new Exception(__Execution.Result));
+					this.OnIPv6RoutesAssignmentError(new Exception(__Execution.Result));
 					return;
 				}
 

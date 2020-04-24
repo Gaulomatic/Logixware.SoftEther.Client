@@ -1,3 +1,4 @@
+using System;
 using System.Net.NetworkInformation;
 
 using Logixware.SoftEther.Client.Shell;
@@ -8,6 +9,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 	public interface IPlatform
 	{
 		void Initialize();
+
+		ExecutionResult Ping(String host);
 
 		ExecutionResult AssignIPAddress(NetworkInterface networkInterface, IPv4Information info);
 		ExecutionResult AssignIPAddress(NetworkInterface networkInterface, IPv6Information info);

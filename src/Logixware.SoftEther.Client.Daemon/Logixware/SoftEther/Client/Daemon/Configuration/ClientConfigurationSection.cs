@@ -7,6 +7,7 @@ namespace Logixware.SoftEther.Client.Daemon.Configuration
 {
 	public class ClientConfigurationSection
 	{
+		public ShellConfigurationSection Shell { get; set; }
 		public Int32 Interval { get; set; }
 		public Int32 ConnectionAttemptsBeforeClientRestart { get; set; }
 		public String InternetConnectionTestUrl { get; set; }

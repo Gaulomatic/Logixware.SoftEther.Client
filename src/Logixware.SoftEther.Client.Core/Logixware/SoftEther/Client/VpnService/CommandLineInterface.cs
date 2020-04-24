@@ -132,7 +132,7 @@ namespace Logixware.SoftEther.Client.VpnService
 		private String ExecuteCommand(String command)
 		{
 			var __Command = $"\"{this._Configuration.PathToCli}\" localhost /CLIENT /PASSWORD=\"{this._Configuration.CliPassword}\" /CMD {command}";
-			var __Execution = this._Shell.ExecuteCommand(__Command);
+			var __Execution = this._Shell.ExecuteCommand(__Command, false);
 
 			if (__Execution.Succeeded)
 			{
