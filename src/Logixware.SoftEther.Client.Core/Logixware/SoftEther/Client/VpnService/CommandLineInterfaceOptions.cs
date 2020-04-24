@@ -2,7 +2,7 @@ using System;
 
 namespace Logixware.SoftEther.Client.VpnService
 {
-	public class CommandLineInterfaceConfiguration
+	public class CommandLineInterfaceOptions
 	{
 		public String PathToClient { get; set; }
 		public String PathToCli { get; set; }

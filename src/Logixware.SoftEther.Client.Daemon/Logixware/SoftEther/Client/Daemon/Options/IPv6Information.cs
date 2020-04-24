@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Logixware.SoftEther.Client.Daemon.Entities
+namespace Logixware.SoftEther.Client.Daemon.Options
 {
 	// ReSharper disable once InconsistentNaming
 	public class IPv6Information

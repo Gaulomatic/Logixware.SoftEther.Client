@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Logixware.SoftEther.Client.Shell
 {
@@ -9,9 +10,10 @@ namespace Logixware.SoftEther.Client.Shell
 	{
 		public BashShell
 		(
-			ILogger<BashShell> logger
+			ILogger<BashShell> logger,
+			IOptions<ShellOptions> options
 		)
-		: base(logger)
+		: base(logger, options)
 		{
 		}
 
@@ -21,7 +23,7 @@ namespace Logixware.SoftEther.Client.Shell
 
 			return new ProcessStartInfo
 			{
-				FileName = "/bin/bash",
+				FileName = base.Options.Value.Path,
 				Arguments = $"-c \"{__EscapedArgs}\"",
 				RedirectStandardOutput = true,
 				RedirectStandardError = true,

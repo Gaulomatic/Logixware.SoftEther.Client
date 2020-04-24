@@ -1,8 +1,8 @@
 using System;
 
-namespace Logixware.SoftEther.Client.Daemon.Configuration
+namespace Logixware.SoftEther.Client.Daemon.Platform
 {
-	public class MacPlatformConfigurationSection
+	public class MacPlatformOptions
 	{
 		public String TapKextIdentifier { get; set; }
 		public String PathToTapKext { get; set; }

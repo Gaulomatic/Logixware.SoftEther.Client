@@ -5,13 +5,16 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using System.Reactive.Subjects;
-
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using Logixware.SoftEther.Client.VpnService;
+
+using Logixware.SoftEther.Client.Daemon.Options;
+using Logixware.SoftEther.Client.Daemon.Platform;
 
 namespace Logixware.SoftEther.Client.Daemon.Services
 {
@@ -20,7 +23,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		private readonly ILogger<ClientService> _Logger;
 		private readonly ILogger<VirtualNetworkService> _NetworkLogger;
 		private readonly IHostApplicationLifetime _AppLifetime;
-		private readonly IClientConfiguration _Configuration;
+		private readonly IOptions<GeneralOptions> _GeneralOptions;
+		private readonly IOptions<NetworkOptions> _NetworkOptions;
 		private readonly ICommandLineInterface _Cli;
 		private readonly IVpnConnectionVerifier _VpnConnectionVerifier;
 		private readonly IInternetConnectionVerifier _InternetConnectionVerifierVerifier;
@@ -41,7 +45,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			ILogger<ClientService> logger,
 			ILogger<VirtualNetworkService> networkLogger,
 			IHostApplicationLifetime appLifetime,
-			IClientConfiguration configuration,
+			IOptions<GeneralOptions> generalOptions,
+			IOptions<NetworkOptions> networkOptions,
 			ICommandLineInterface cli,
 			IInternetConnectionVerifier internetConnectionVerifierVerifier,
 			IVpnConnectionVerifier vpnConnectionVerifier,
@@ -51,7 +56,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this._NetworkLogger = networkLogger ?? throw new ArgumentNullException(nameof(networkLogger));
 			this._AppLifetime = appLifetime ?? throw new ArgumentNullException(nameof(appLifetime));
-			this._Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+			this._GeneralOptions = generalOptions ?? throw new ArgumentNullException(nameof(generalOptions));
+			this._NetworkOptions = networkOptions ?? throw new ArgumentNullException(nameof(networkOptions));
 			this._Cli = cli ?? throw new ArgumentNullException(nameof(cli));
 			this._InternetConnectionVerifierVerifier = internetConnectionVerifierVerifier ?? throw new ArgumentNullException(nameof(internetConnectionVerifierVerifier));
 			this._VpnConnectionVerifier = vpnConnectionVerifier ?? throw new ArgumentNullException(nameof(vpnConnectionVerifier));
@@ -83,7 +89,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			this._Logger?.Inform("Starting VPN client service...");
 			this._Cli.StartClient();
 
-			var __ValidNetworks = this._Configuration.GetValidNetworks(this._Cli).ToList();
+			var __ValidNetworks = this._NetworkOptions.Value.GetValidNetworks(this._Cli).ToList();
 
 			if (__ValidNetworks.Count == 0)
 			{
@@ -124,7 +130,12 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		private async Task TickAsync(CancellationToken cancellationToken)
 		{
-			if (await this._InternetConnectionVerifierVerifier.IsAvailableAsync(this._Configuration.Settings.InternetConnectionTestUrl).ConfigureAwait(false))
+			var __IsOnline = await this._InternetConnectionVerifierVerifier
+
+				.IsAvailableAsync(this._GeneralOptions.Value.InternetConnectionTestUrl)
+				.ConfigureAwait(false);
+
+			if (__IsOnline)
 			{
 				if (this._IsInternetConnected == null || !(Boolean) this._IsInternetConnected)
 				{
@@ -174,7 +185,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				var __OverdueNetworks = this._Networks
 
 					.ToList()
-					.Where(p => p.Value >= this._Configuration.Settings.ConnectionAttemptsBeforeClientRestart)
+					.Where(p => p.Value >= this._GeneralOptions.Value.ConnectionAttemptsBeforeClientRestart)
 					.Select(p => p.Key)
 					.ToList();
 

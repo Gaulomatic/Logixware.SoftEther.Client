@@ -9,7 +9,8 @@ using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.VpnService;
-using Logixware.SoftEther.Client.Daemon.Entities;
+using Logixware.SoftEther.Client.Daemon.Options;
+using Logixware.SoftEther.Client.Daemon.Platform;
 
 namespace Logixware.SoftEther.Client.Daemon.Services
 {

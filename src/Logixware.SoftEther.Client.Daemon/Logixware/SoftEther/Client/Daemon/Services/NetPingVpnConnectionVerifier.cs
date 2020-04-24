@@ -6,12 +6,6 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 {
 	public class NetPingVpnConnectionVerifier : IVpnConnectionVerifier
 	{
-		private IClientConfiguration _Configuration;
-
-		public NetPingVpnConnectionVerifier(IClientConfiguration configuration)
-		{
-			this._Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-		}
 		public ConnectionVerificationResult Verify(String host)
 		{
 			const String __Data = "a quick brown fox jumped over the lazy dog";
@@ -22,8 +16,6 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			{
 				DontFragment = true
 			};
-
-			System.Threading.Thread.Sleep(5000);
 
 			var __Buffer = Encoding.ASCII.GetBytes(__Data);
 			var __Status = IPStatus.Unknown;

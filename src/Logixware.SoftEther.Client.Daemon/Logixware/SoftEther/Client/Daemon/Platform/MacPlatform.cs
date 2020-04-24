@@ -3,57 +3,40 @@ using System.Threading;
 using System.Net.NetworkInformation;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 using Logixware.SoftEther.Client.Shell;
 
-using Logixware.SoftEther.Client.Daemon.Entities;
-using Logixware.SoftEther.Client.Daemon.Configuration;
+using Logixware.SoftEther.Client.Daemon.Options;
 
-namespace Logixware.SoftEther.Client.Daemon.Services
+namespace Logixware.SoftEther.Client.Daemon.Platform
 {
 	public class MacPlatform : IPlatform
 	{
 		private readonly ILogger<MacPlatform> _Logger;
+		private readonly IOptions<MacPlatformOptions> _Options;
 		private readonly IShell _Shell;
-
-		private readonly MacPlatformConfigurationSection _Configuration;
 
 		public MacPlatform
 		(
 			ILogger<MacPlatform> logger,
-			IConfiguration configuration,
+			IOptions<MacPlatformOptions> options,
 			IShell shell
 		)
 		{
-			if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			this._Options = options ?? throw new ArgumentNullException(nameof(options));
 			this._Shell = shell ?? throw new ArgumentNullException(nameof(shell));
-
-			this._Configuration = configuration.GetSection("VPN:Platform:Mac")?.Get<MacPlatformConfigurationSection>() ?? new MacPlatformConfigurationSection();
-
-			if (String.IsNullOrEmpty(this._Configuration.TapKextIdentifier))
-			{
-				this._Configuration.TapKextIdentifier = "net.sf.tuntaposx.tap";
-				this._Logger.Inform($"\"TapKextIdentifier\" not defined. Using \"{this._Configuration.TapKextIdentifier}\".");
-			}
-
-			if (String.IsNullOrEmpty(this._Configuration.PathToTapKext))
-			{
-				this._Configuration.PathToTapKext = "/Library/Extensions/tap.kext";
-				this._Logger.Inform($"\"PathToTapKext\" not defined. Using \"{this._Configuration.PathToTapKext}\".");
-			}
 		}
 
 		public void Initialize()
 		{
 			if (!this.IsDriverLoaded())
 			{
-				this._Logger.Inform($"Kernel extension \"{this._Configuration.TapKextIdentifier}\" not loaded.");
-				this._Logger.Inform($"Loading Kernel extension \"{this._Configuration.PathToTapKext}\".");
+				this._Logger.Inform($"Kernel extension \"{this._Options.Value.TapKextIdentifier}\" not loaded.");
+				this._Logger.Inform($"Loading Kernel extension \"{this._Options.Value.PathToTapKext}\".");
 
-				var __Command = $"kextload \"{this._Configuration.PathToTapKext}\"";
+				var __Command = $"kextload \"{this._Options.Value.PathToTapKext}\"";
 				var __Response = this._Shell.ExecuteCommand(__Command);
 
 				if (!__Response.Succeeded)
@@ -64,14 +47,14 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				while (!this.IsDriverLoaded())
 				{
 					Thread.Sleep(1000);
-					this._Logger.Inform($"Kernel extension \"{this._Configuration.TapKextIdentifier}\" still not loaded.");
+					this._Logger.Inform($"Kernel extension \"{this._Options.Value.TapKextIdentifier}\" still not loaded.");
 				}
 			}
 		}
 
 		private Boolean IsDriverLoaded()
 		{
-			var __Command = $"kextstat | grep \"{this._Configuration.TapKextIdentifier}\"";
+			var __Command = $"kextstat | grep \"{this._Options.Value.TapKextIdentifier}\"";
 			var __Response = this._Shell.ExecuteCommand(__Command);
 
 			if (!__Response.Succeeded)
@@ -79,7 +62,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				throw new Exception(__Response.Result);
 			}
 
-			return !String.IsNullOrEmpty(__Response.Result) && __Response.Result.Contains(this._Configuration.TapKextIdentifier) && !__Response.Result.Contains("failed to load");
+			return !String.IsNullOrEmpty(__Response.Result) && __Response.Result.Contains(this._Options.Value.TapKextIdentifier) && !__Response.Result.Contains("failed to load");
 		}
 
 		public ExecutionResult Ping(String host)

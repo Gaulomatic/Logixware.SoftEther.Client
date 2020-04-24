@@ -1,6 +1,8 @@
 using System;
 using System.Net.NetworkInformation;
 
+using Logixware.SoftEther.Client.Daemon.Platform;
+
 namespace Logixware.SoftEther.Client.Daemon.Services
 {
 	public class ConsolePingVpnConnectionVerifier : IVpnConnectionVerifier
@@ -21,7 +23,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				var __Reply = this._Platform.Ping(host);
 				__Status = __Reply.Succeeded ? IPStatus.Success : IPStatus.TimedOut;
 			}
-			catch (Exception ex)
+			catch
 			{
 				__Status = IPStatus.Unknown;
 			}

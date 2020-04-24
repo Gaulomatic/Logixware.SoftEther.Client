@@ -1,11 +1,10 @@
 using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 using Logixware.SoftEther.Client.Shell;
 
@@ -14,37 +13,19 @@ namespace Logixware.SoftEther.Client.VpnService
 	public class CommandLineInterface : ICommandLineInterface
 	{
 		private readonly ILogger<CommandLineInterface> _Logger;
-		private readonly CommandLineInterfaceConfiguration _Configuration;
+		private readonly IOptions<CommandLineInterfaceOptions> _Options;
 		private readonly IShell _Shell;
 
 		public CommandLineInterface
 		(
 			ILogger<CommandLineInterface> logger,
-			IConfiguration configuration,
+			IOptions<CommandLineInterfaceOptions> options,
 			IShell shell
 		)
 		{
-			if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			this._Options = options ?? throw new ArgumentNullException(nameof(options));
 			this._Shell = shell ?? throw new ArgumentNullException(nameof(shell));
-
-			this._Configuration = configuration.GetSection("VPN:CommandLineInterface")?.Get<CommandLineInterfaceConfiguration>();
-
-			if (this._Configuration == null)
-			{
-				throw new InvalidOperationException("No command line interface configuration found.");
-			}
-
-			if (String.IsNullOrEmpty(this._Configuration.PathToClient))
-			{
-				throw new InvalidOperationException("No path to the VPN client service found.");
-			}
-
-			if (String.IsNullOrEmpty(this._Configuration.PathToCli))
-			{
-				throw new InvalidOperationException("No path to the VPN client command line interface found.");
-			}
 		}
 
 		public IEnumerable<Account> GetAccounts()
@@ -97,7 +78,7 @@ namespace Logixware.SoftEther.Client.VpnService
 
 		public void StartClient()
 		{
-			var __StartCommand = $"\"{this._Configuration.PathToClient}\" start";
+			var __StartCommand = $"\"{this._Options.Value.PathToClient}\" start";
 			var __StartExecution = this._Shell.ExecuteCommand(__StartCommand);
 
 			if (__StartExecution.Succeeded)
@@ -114,7 +95,7 @@ namespace Logixware.SoftEther.Client.VpnService
 
 		public void StopClient()
 		{
-			var __StopCommand = $"\"{this._Configuration.PathToClient}\" stop";
+			var __StopCommand = $"\"{this._Options.Value.PathToClient}\" stop";
 			var __StopExecution = this._Shell.ExecuteCommand(__StopCommand);
 
 			if (__StopExecution.Succeeded)
@@ -131,7 +112,7 @@ namespace Logixware.SoftEther.Client.VpnService
 
 		private String ExecuteCommand(String command)
 		{
-			var __Command = $"\"{this._Configuration.PathToCli}\" localhost /CLIENT /PASSWORD=\"{this._Configuration.CliPassword}\" /CMD {command}";
+			var __Command = $"\"{this._Options.Value.PathToCli}\" localhost /CLIENT /PASSWORD=\"{this._Options.Value.CliPassword}\" /CMD {command}";
 			var __Execution = this._Shell.ExecuteCommand(__Command, false);
 
 			if (__Execution.Succeeded)

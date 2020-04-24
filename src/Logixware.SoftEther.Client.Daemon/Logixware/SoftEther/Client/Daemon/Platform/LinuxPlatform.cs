@@ -1,14 +1,12 @@
 using System;
 using System.Net.NetworkInformation;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.Shell;
+using Logixware.SoftEther.Client.Daemon.Options;
 
-using Logixware.SoftEther.Client.Daemon.Entities;
-
-namespace Logixware.SoftEther.Client.Daemon.Services
+namespace Logixware.SoftEther.Client.Daemon.Platform
 {
 
 	public class LinuxPlatform : IPlatform
@@ -19,12 +17,9 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		public LinuxPlatform
 		(
 			ILogger<LinuxPlatform> logger,
-			IConfiguration configuration,
 			IShell shell
 		)
 		{
-			if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
 			this._Logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this._Shell = shell ?? throw new ArgumentNullException(nameof(shell));
 		}
