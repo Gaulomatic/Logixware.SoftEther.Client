@@ -26,8 +26,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		{
 			try
 			{
-				using (var __Client = new WebClient())
-				using (await __Client.OpenReadTaskAsync(url).ConfigureAwait(false))
+				using var __Client = new WebClient();
+				await using (await __Client.OpenReadTaskAsync(url).ConfigureAwait(false))
 				{
 					return true;
 				}

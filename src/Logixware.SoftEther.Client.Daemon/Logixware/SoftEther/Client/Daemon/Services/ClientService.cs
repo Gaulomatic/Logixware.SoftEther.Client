@@ -89,30 +89,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			this._Logger?.Inform("Starting VPN client service...");
 			this._Cli.StartClient();
 
-			var __ValidNetworks = this._NetworkOptions.Value.GetValidNetworks(this._Cli).ToList();
-
-			if (__ValidNetworks.Count == 0)
-			{
-				this._Logger?.Critical("No valid network found.");
-				this._AppLifetime.StopApplication();
-
-				return Task.CompletedTask;
-			}
-
-			foreach (var __Network in __ValidNetworks)
-			{
-				this._Networks.Add(new VirtualNetworkService(
-
-					this._NetworkLogger,
-					this._Cli,
-					this._VpnConnectionVerifier,
-					this._Platform,
-					this._ClientServiceRestarting,
-					this._ClientServiceRestarted,
-					__Network
-
-				), 0);
-			}
+			this.StartNetworks();
 
 			this._RunTask = Task.Run(async () =>
 			{
@@ -128,6 +105,27 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			return Task.CompletedTask;
 		}
 
+		public async Task StopAsync(CancellationToken cancellationToken)
+		{
+			if (!this._IsRunning)
+			{
+				throw new InvalidOperationException("Service not running.");
+			}
+
+			this._RunCancellationTokenSource.Cancel();
+			this._IsRunning = false;
+
+			this.StopNetworks();
+
+			this._Cli.StopClient();
+
+			if (this._RunTask != null && this._RunTask.Status == TaskStatus.Running)
+			{
+				await this._RunTask;
+			}
+		}
+
+		// private int count;
 		private async Task TickAsync(CancellationToken cancellationToken)
 		{
 			var __IsOnline = await this._InternetConnectionVerifierVerifier
@@ -137,6 +135,9 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 			if (__IsOnline)
 			{
+				// if (this.count > 1) return;
+				// this.count++;
+
 				if (this._IsInternetConnected == null || !(Boolean) this._IsInternetConnected)
 				{
 					this._IsInternetConnected = true;
@@ -215,6 +216,50 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			}
 		}
 
+		private void StartNetworks()
+		{
+			var __ValidNetworks = this._NetworkOptions.Value
+
+				.GetValidNetworks(this._Cli)
+				.ToList();
+
+			if (__ValidNetworks.Count == 0)
+			{
+				this._Logger?.Critical("No valid network found.");
+				this._AppLifetime.StopApplication();
+
+				return;
+			}
+
+			foreach (var __Network in __ValidNetworks)
+			{
+				var __NetworkService = new VirtualNetworkService
+				(
+					this._NetworkLogger,
+					this._Cli,
+					this._VpnConnectionVerifier,
+					this._Platform,
+					this._ClientServiceRestarting,
+					this._ClientServiceRestarted,
+					__Network
+				);
+
+				__NetworkService.Initialize();
+
+				this._Networks.Add(__NetworkService, 0);
+			}
+		}
+
+		private void StopNetworks()
+		{
+			foreach (var __NetworkService in this._Networks.Keys)
+			{
+				__NetworkService.Dispose();
+			}
+
+			this._Networks.Clear();
+		}
+
 		private void ResetAttemptCounters(IEnumerable<VirtualNetworkService> items)
 		{
 			foreach (var __VirtualNetwork in items.ToList())
@@ -229,28 +274,12 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 			this._ClientServiceRestarting.OnNext(null);
 
+			this.StopNetworks();
 			this._Cli.RestartClient();
+			this.StartNetworks();
 			this.ResetAttemptCounters(this._Networks.Keys);
 
 			this._ClientServiceRestarted.OnNext(null);
-		}
-
-		public async Task StopAsync(CancellationToken cancellationToken)
-		{
-			if (!this._IsRunning)
-			{
-				throw new InvalidOperationException("Service not running.");
-			}
-
-			this._RunCancellationTokenSource.Cancel();
-			this._IsRunning = false;
-
-			this._Cli.StopClient();
-
-			if (this._RunTask != null && this._RunTask.Status == TaskStatus.Running)
-			{
-				await this._RunTask;
-			}
 		}
 
 		public void Dispose()

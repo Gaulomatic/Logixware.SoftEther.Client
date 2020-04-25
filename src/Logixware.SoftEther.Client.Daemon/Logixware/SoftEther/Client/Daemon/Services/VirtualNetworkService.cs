@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-
+using System.Reflection.Metadata;
 using Microsoft.Extensions.Logging;
 
 using Logixware.SoftEther.Client.VpnService;
@@ -23,6 +23,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		private readonly Subject<Object> _IsDisposed;
 
+		// private readonly BehaviorSubject<NetworkInterface> _Interface;
 		private readonly BehaviorSubject<String> _InterfaceName;
 		private readonly BehaviorSubject<Account> _Account;
 		private readonly BehaviorSubject<Device> _Device;
@@ -90,6 +91,14 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				.TakeUntil(this._IsDisposed)
 				.DistinctUntilChanged()
 				.Subscribe(this.OnDeviceFoundChanged);
+
+			// this._Interface = new BehaviorSubject<NetworkInterface>(null);
+			// this._Interface
+			//
+			// 	.TakeUntil(this._IsDisposed)
+			// 	.SkipUntil(__IsInitialized)
+			// 	.DistinctUntilChanged()
+			// 	.Subscribe(this.OnInterfaceFoundChanged);
 
 			this._InterfaceName = new BehaviorSubject<String>(null);
 			this._InterfaceName
@@ -174,6 +183,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		public VirtualNetwork Configuration { get; }
 
+		public String InterfaceName => this._InterfaceName?.Value;
+
 		private void OnClientServiceRestarting(Object e)
 		{
 			this._ConnectionState.OnNext(ConnectionState.Disconnected);
@@ -226,11 +237,11 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		{
 			if (value != null)
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Account found in the VPN client service.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Account in the VPN client service found.");
 			}
 			else
 			{
-				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Account not found in the VPN client service.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Account in the VPN client service not found.");
 			}
 		}
 
@@ -250,11 +261,11 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		{
 			if (!String.IsNullOrEmpty(value))
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Interface \"{value} found.");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": Interface \"{value}\" for physical address \"{this._Device.Value?.PhysicalAddress}\" found.");
 			}
 			else
 			{
-				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": No interface for physical address \"{this._Device.Value?.PhysicalAddress}\" found.");
+				this._Logger?.Warn($"VPN \"{this.Configuration.Name}\": Interface for physical address \"{this._Device.Value?.PhysicalAddress}\" not found.");
 			}
 		}
 
@@ -264,12 +275,12 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 			if ((Boolean) value)
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" assigned to adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" assigned to adapter \"{this.InterfaceName}\".");
 				this.AssignIPv4Routes();
 			}
 			else
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" released from adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv4.Address}\" released from adapter \"{this.InterfaceName}\".");
 				this.ReleaseIPv4Routes();
 			}
 		}
@@ -277,7 +288,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		private void OnIPv4AddressAssignmentError(Exception ex)
 		{
 			if (this.Configuration.IPv4 == null) return;
-			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv4.Address}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv4.Address}\" on adapter \"{this.InterfaceName}\": {ex.Message}");
 		}
 
 		private void OnIPv6AddressAssignedChanged(Boolean? value)
@@ -286,12 +297,12 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 			if ((Boolean) value)
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" assigned to adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" assigned to adapter \"{this.InterfaceName}\".");
 				this.AssignIPv6Routes();
 			}
 			else
 			{
-				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" released from adapter \"{this._InterfaceName.Value}\".");
+				this._Logger?.Inform($"VPN \"{this.Configuration.Name}\": IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" released from adapter \"{this.InterfaceName}\".");
 				this.ReleaseIPv6Routes();
 			}
 		}
@@ -299,7 +310,7 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		private void OnIPv6AddressAssignmentError(Exception ex)
 		{
 			if (this.Configuration.IPv6 == null) return;
-			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" on adapter \"{this._InterfaceName.Value}\": {ex.Message}");
+			this._Logger?.Error($"VPN \"{this.Configuration.Name}\": Error assigning or releasing IP address \"{this.Configuration.IPv6.Address}/{this.Configuration.IPv6.Prefix}\" on adapter \"{this.InterfaceName}\": {ex.Message}");
 		}
 
 		private void OnIPv4RoutesAppliedChanged(Boolean? value)
@@ -357,6 +368,52 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			}
 		}
 
+		public ConfigurationState Initialize()
+		{
+			var __ConfigurationState = this.RetrieveInterface();
+			this._ConfigurationState.OnNext(__ConfigurationState);
+
+			if (__ConfigurationState == ConfigurationState.Error)
+			{
+				this._ConnectionState.OnNext(ConnectionState.Disconnected);
+				this._ReachableState.OnNext(ReachableState.Unreachable);
+			}
+
+			return __ConfigurationState;
+		}
+
+		private ConfigurationState RetrieveInterface()
+		{
+			this._Account.OnNext(this._Cli.GetAccount(this.Configuration.Name));
+
+			if (this._Account.Value == null)
+			{
+				return ConfigurationState.Error;
+			}
+
+			this._Device.OnNext(this._Cli.GetDevice(this._Account.Value.DeviceName));
+
+			if (this._Device.Value == null)
+			{
+				return ConfigurationState.Error;
+			}
+
+			var __Interface = NetworkInterface
+
+				.GetAllNetworkInterfaces()
+				.SingleOrDefault(i => String.Equals(i.GetPhysicalAddress().ToString(), this._Device.Value.PhysicalAddress, StringComparison.OrdinalIgnoreCase));
+
+			if (__Interface == null)
+			{
+				return ConfigurationState.Error;
+			}
+
+			// this._Interface.OnNext(__Interface);
+			this._InterfaceName.OnNext(__Interface.Name);
+
+			return ConfigurationState.OK;
+		}
+
 		public async Task<ReachableResult> IsReachableAsync()
 		{
 			// ReSharper disable once InconsistentNaming
@@ -370,14 +427,8 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 				// ReSharper disable once PossibleInvalidOperationException
 				(ReachableState) this._ReachableState.Value)));
 
-			var __ConfigurationState = await this.ConfigureInterfaceAsync().ConfigureAwait(false);
-			this._ConfigurationState.OnNext(__ConfigurationState);
-
-			if (__ConfigurationState == ConfigurationState.Error)
+			if (this._ConfigurationState.Value == ConfigurationState.Error)
 			{
-				this._ConfigurationState.OnNext(ConfigurationState.Error);
-				this._ConnectionState.OnNext(ConnectionState.Disconnected);
-				this._ReachableState.OnNext(ReachableState.Unreachable);
 				return await ReturnResult().ConfigureAwait(false);
 			}
 
@@ -397,64 +448,51 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			return await ReturnResult().ConfigureAwait(false);
 		}
 
-		private async Task<ConfigurationState> ConfigureInterfaceAsync()
-		{
-			this._Account.OnNext(this._Cli.GetAccount(this.Configuration.Name));
-
-			if (this._Account.Value == null)
-			{
-				return await Task.FromResult(ConfigurationState.Error).ConfigureAwait(false);
-			}
-
-			this._Device.OnNext(this._Cli.GetDevice(this._Account.Value.DeviceName));
-
-			if (this._Device.Value == null)
-			{
-				return await Task.FromResult(ConfigurationState.Error).ConfigureAwait(false);
-			}
-
-			var __Interface = NetworkInterface
-
-				.GetAllNetworkInterfaces()
-				.SingleOrDefault(i => String.Equals(i.GetPhysicalAddress().ToString(), this._Device.Value.PhysicalAddress, StringComparison.OrdinalIgnoreCase));
-
-			if (__Interface == null)
-			{
-				return await Task.FromResult(ConfigurationState.Error).ConfigureAwait(false);
-			}
-
-			this._InterfaceName.OnNext(__Interface.Name);
-
-			return await Task.FromResult(ConfigurationState.OK).ConfigureAwait(false);
-		}
-
 		// ReSharper disable once InconsistentNaming
 		private void AssignIPAddresses()
 		{
-			if (this.Configuration.IPv4 != null && !this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv4.Address))
+			this._Logger.Trace("INVOKE: VirtualNetworkService.AssignIPAddresses()");
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - Retrieve NetworkInterface");
+			var __Interface = this.GetInterface(this._Device.Value);
+			// var __Interface = this._Interface.Value;
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Check IP Address on network interface");
+
+			if (this.Configuration.IPv4 != null && !this.HasAddress(__Interface, this.Configuration.IPv4.Address))
 			{
-				var __Execution = this._Platform.AssignIPAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv4);
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Platform execution");
+				var __Execution = this._Platform.AssignIPAddress(__Interface, this.Configuration.IPv4);
 
 				if (__Execution.Succeeded)
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Platform execution - success");
 					this._IPv4AddressAssigned.OnNext(true);
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Observable value set");
 				}
 				else
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Platform execution - error");
 					this.OnIPv4AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 
-			if (this.Configuration.IPv6 != null && !this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv6.Address))
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv6");
+
+			if (this.Configuration.IPv6 != null && !this.HasAddress(__Interface, this.Configuration.IPv6.Address))
 			{
-				var __Execution = this._Platform.AssignIPAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv6);
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv6 - Platform execution");
+				var __Execution = this._Platform.AssignIPAddress(__Interface, this.Configuration.IPv6);
 
 				if (__Execution.Succeeded)
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv6 - Platform execution - success");
 					this._IPv6AddressAssigned.OnNext(true);
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv6 - Observable value set");
 				}
 				else
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Platform execution - error");
 					this.OnIPv6AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
@@ -463,30 +501,48 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 		// ReSharper disable once InconsistentNaming
 		private void ReleaseIPAddresses()
 		{
-			if (this.Configuration.IPv4 != null && this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv4.Address))
+			this._Logger.Trace("INVOKE: VirtualNetworkService.ReleaseIPAddresses()");
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - Retrieve NetworkInterface");
+			var __Interface = this.GetInterface(this._Device.Value);
+			// var __Interface = this._Interface.Value;
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPAddresses() - IPv4 - Check IP Address on network interface");
+
+			if (this.Configuration.IPv4 != null && this.HasAddress(__Interface, this.Configuration.IPv4.Address))
 			{
-				var __Execution = this._Platform.ReleaseIPAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv4);
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv4 - Platform execution");
+				var __Execution = this._Platform.ReleaseIPAddress(__Interface, this.Configuration.IPv4);
 
 				if (__Execution.Succeeded)
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv4 - Platform execution - success");
 					this._IPv4AddressAssigned.OnNext(false);
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv4 - Observable value set");
 				}
 				else
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv4 - Platform execution - error");
 					this.OnIPv4AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
 
-			if (this.Configuration.IPv6 != null && this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv6.Address))
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv6");
+
+			if (this.Configuration.IPv6 != null && this.HasAddress(__Interface, this.Configuration.IPv6.Address))
 			{
-				var __Execution = this._Platform.ReleaseIPAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv6);
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv6 - Platform execution");
+				var __Execution = this._Platform.ReleaseIPAddress(__Interface, this.Configuration.IPv6);
 
 				if (__Execution.Succeeded)
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv6 - Platform execution - success");
 					this._IPv6AddressAssigned.OnNext(false);
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv6 - Observable value set");
 				}
 				else
 				{
+					this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPAddresses() - IPv4 - Platform execution - error");
 					this.OnIPv6AddressAssignmentError(new Exception(__Execution.Result));
 				}
 			}
@@ -494,16 +550,34 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		private void AssignIPv4Routes()
 		{
-			if (this.Configuration.IPv4?.Routes != null && this.Configuration.IPv4.Routes.Count > 0 && this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv4.Address))
+			this._Logger.Trace("INVOKE: VirtualNetworkService.AssignIPv4Routes()");
+
+			if (this.Configuration.IPv4?.Routes == null || this.Configuration.IPv4.Routes.Count == 0)
+			{
+				this._Logger.Debug($"VPN \"{this.Configuration.Name}\": No IPv4 routes defined.");
+				return;
+			}
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPv4Routes() - Retrieve NetworkInterface");
+			var __Interface = this.GetInterface(this._Device.Value);
+			// var __Interface = this._Interface.Value;
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPv4Routes() - Check IP Address on network interface");
+
+			if (this.HasAddress(__Interface, this.Configuration.IPv4.Address))
 			{
 				foreach (var __Route in this.Configuration.IPv4.Routes)
 				{
-					var __Execution = this._Platform.AssignRoute(this.GetInterface(this._InterfaceName.Value), __Route);
+					this._Logger.Debug($"VPN \"{this.Configuration.Name}\": Assigning IPv4 route \"{__Route}\".");
+					var __Execution = this._Platform.AssignRoute(__Interface, __Route);
 
-					if (__Execution.Succeeded) continue;
+					if (__Execution.Succeeded)
+					{
+						this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv4 Route \"{__Route}\" successfully assigned.");
+						continue;
+					}
 
 					this.OnIPv4RoutesAssignmentError(new Exception(__Execution.Result));
-					return;
 				}
 
 				this._IPv4RoutesAssigned.OnNext(true);
@@ -512,34 +586,66 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		private void ReleaseIPv4Routes()
 		{
-			if (this.Configuration.IPv4?.Routes != null && this.Configuration.IPv4.Routes.Count > 0)
+			this._Logger.Trace("INVOKE: VirtualNetworkService.ReleaseIPv4Routes()");
+
+			if (this.Configuration.IPv4?.Routes == null || this.Configuration.IPv4.Routes.Count == 0)
 			{
+				this._Logger.Debug($"VPN \"{this.Configuration.Name}\": No IPv4 routes defined.");
+			}
+			else
+			{
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPv4Routes() - Retrieve NetworkInterface");
+				var __Interface = this.GetInterface(this._Device.Value);
+				// var __Interface = this._Interface.Value;
+
 				foreach (var __Route in this.Configuration.IPv4.Routes)
 				{
-					var __Execution = this._Platform.ReleaseRoute(this.GetInterface(this._InterfaceName.Value), __Route);
+					this._Logger.Debug($"VPN \"{this.Configuration.Name}\": Releasing IPv4 route \"{__Route}\".");
+					var __Execution = this._Platform.ReleaseRoute(__Interface, __Route);
 
-					if (__Execution.Succeeded) continue;
+					if (__Execution.Succeeded)
+					{
+						this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv4 route \"{__Route}\" successfully released.");
+						continue;
+					}
 
 					this.OnIPv4RoutesAssignmentError(new Exception(__Execution.Result));
-					return;
 				}
-
-				this._IPv4RoutesAssigned.OnNext(false);
 			}
+
+			this._IPv4RoutesAssigned.OnNext(false);
 		}
 
 		private void AssignIPv6Routes()
 		{
-			if (this.Configuration.IPv6?.Routes != null && this.Configuration.IPv6.Routes.Count > 0 && this.HasAddress(this.GetInterface(this._InterfaceName.Value), this.Configuration.IPv6.Address))
+			this._Logger.Trace("INVOKE: VirtualNetworkService.AssignIPv6Routes()");
+
+			if (this.Configuration.IPv6?.Routes == null || this.Configuration.IPv6.Routes.Count == 0)
+			{
+				this._Logger.Debug($"VPN \"{this.Configuration.Name}\": No IPv6 routes defined.");
+				return;
+			}
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPv6Routes() - Retrieve NetworkInterface");
+			var __Interface = this.GetInterface(this._Device.Value);
+			// var __Interface = this._Interface.Value;
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.AssignIPv6Routes() - Check IP Address on network interface");
+
+			if (this.HasAddress(__Interface, this.Configuration.IPv6.Address))
 			{
 				foreach (var __Route in this.Configuration.IPv6.Routes)
 				{
-					var __Execution = this._Platform.AssignRoute(this.GetInterface(this._InterfaceName.Value), __Route);
+					this._Logger.Debug($"VPN \"{this.Configuration.Name}\": Assigning IPv6 route \"{__Route}\".");
+					var __Execution = this._Platform.AssignRoute(__Interface, __Route);
 
-					if (__Execution.Succeeded) continue;
+					if (__Execution.Succeeded)
+					{
+						this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv6 Route \"{__Route}\" successfully assigned.");
+						continue;
+					}
 
 					this.OnIPv6RoutesAssignmentError(new Exception(__Execution.Result));
-					return;
 				}
 
 				this._IPv6RoutesAssigned.OnNext(true);
@@ -548,33 +654,45 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 
 		private void ReleaseIPv6Routes()
 		{
-			if (this.Configuration.IPv6?.Routes != null && this.Configuration.IPv6.Routes.Count > 0)
+			this._Logger.Trace("INVOKE: VirtualNetworkService.ReleaseIPv6Routes()");
+
+			if (this.Configuration.IPv6?.Routes == null || this.Configuration.IPv6.Routes.Count == 0)
 			{
+				this._Logger.Debug($"VPN \"{this.Configuration.Name}\": No IPv6 routes defined.");
+			}
+			else
+			{
+				this._Logger.Trace("INVOCATION: VirtualNetworkService.ReleaseIPv6Routes() - Retrieve NetworkInterface");
+				var __Interface = this.GetInterface(this._Device.Value);
+				// var __Interface = this._Interface.Value;
+
 				foreach (var __Route in this.Configuration.IPv6.Routes)
 				{
-					var __Execution = this._Platform.ReleaseRoute(this.GetInterface(this._InterfaceName.Value), __Route);
+					this._Logger.Debug($"VPN \"{this.Configuration.Name}\": Releasing IPv6 route \"{__Route}\".");
+					var __Execution = this._Platform.ReleaseRoute(__Interface, __Route);
 
-					if (__Execution.Succeeded) continue;
+					if (__Execution.Succeeded)
+					{
+						this._Logger.Inform($"VPN \"{this.Configuration.Name}\": IPv6 route \"{__Route}\" successfully released.");
+						continue;
+					}
 
 					this.OnIPv6RoutesAssignmentError(new Exception(__Execution.Result));
-					return;
 				}
-
-				this._IPv6RoutesAssigned.OnNext(false);
 			}
-		}
 
-		private NetworkInterface GetInterface(String name)
-		{
-			return NetworkInterface
-
-				.GetAllNetworkInterfaces()
-				.SingleOrDefault(i => String.Equals(i.Name, name, StringComparison.OrdinalIgnoreCase));
+			this._IPv6RoutesAssigned.OnNext(false);
 		}
 
 		private Boolean HasAddress(NetworkInterface networkInterface, String address)
 		{
-			var __IpAddresses = networkInterface.GetIPProperties().UnicastAddresses;
+			this._Logger.Trace("INVOKE: VirtualNetworkService.HasAddress()");
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.HasAddress() - Retrieve IP properties");
+			var __IpProperties = networkInterface.GetIPProperties();
+
+			this._Logger.Trace("INVOCATION: VirtualNetworkService.HasAddress() - Retrieve IP unicast addresses");
+			var __IpAddresses = __IpProperties.UnicastAddresses;
 			var __HasIpAddress = false;
 
 			foreach (var __IpAddress in __IpAddresses)
@@ -590,9 +708,43 @@ namespace Logixware.SoftEther.Client.Daemon.Services
 			return __HasIpAddress;
 		}
 
+		private NetworkInterface GetInterface(Device device)
+		{
+			return NetworkInterface
+
+				.GetAllNetworkInterfaces()
+				.SingleOrDefault(i => String.Equals(i.GetPhysicalAddress().ToString(), device.PhysicalAddress, StringComparison.OrdinalIgnoreCase));
+		}
+
+		private NetworkInterface GetInterface(String interfaceName)
+		{
+			return NetworkInterface
+
+				.GetAllNetworkInterfaces()
+				.SingleOrDefault(i => String.Equals(i.Name, interfaceName, StringComparison.OrdinalIgnoreCase));
+		}
+
 		public void Dispose()
 		{
 			this._IsDisposed.OnNext(null);
+			this._IsDisposed.Dispose();
+
+			// this._Interface.Dispose();
+			this._InterfaceName.Dispose();
+			this._Account.Dispose();
+			this._Device.Dispose();
+
+			this._IPv4AddressAssigned.Dispose();
+			this._IPv6AddressAssigned.Dispose();
+
+			this._IPv4RoutesAssigned.Dispose();
+			this._IPv6RoutesAssigned.Dispose();
+
+			this._ConnectionVerificationResult.Dispose();
+
+			this._ConfigurationState.Dispose();
+			this._ConnectionState.Dispose();
+			this._ReachableState.Dispose();
 		}
 
 		public override String ToString()
